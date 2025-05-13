@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Confidence-Aware Imitation Learning (CARIL) for Autonomous Driving</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', 'Century Gothic', sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      line-height: 1.6;
+    }
+/*     h1 { color: #2c3e50; } */
+    a { color: #2980b9; }
+
+    .img-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .img-col.steering {
+      flex: 1;
+      min-width: 20%;
+    }
+    
+    .img-col.traj {
+      flex: 2;
+      min-width: 80%;
+    }
+
+    .img-col img {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      padding: 4px;
+      background: #ffffff;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<!--   <h1 style="text-align: center;">
+    PLM-Net: Perception Latency Mitigation Network for Vision-Based Lateral Control of Autonomous Vehicles
+  </h1>
+
+  <p><strong>Authors:</strong> 
+    Aws Khalil 
+    <a href="https://orcid.org/0000-0001-9139-3900" target="_blank" style="text-decoration: none;">
+      <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" alt="ORCID" style="vertical-align: middle;">
+    </a>
+    , and Jaerock Kwon
+    <a href="https://orcid.org/0000-0002-5687-6998" target="_blank">
+      <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" alt="ORCID" style="vertical-align:middle;">
+    </a>
+  </p> -->
+
+  <!-- Centered Title -->
+<h1 style="text-align: center; margin-bottom: 0.2em;">
+  PLM-Net:
+</h1>
+<h2 style="text-align: center; margin-top: 0; font-weight: 850;">
+  Perception Latency Mitigation for Vision-Based Lateral Control of Autonomous Vehicles
+</h2>
+
+<!-- Authors and Affiliations -->
+<!-- <div style="text-align: center; font-size: 1.1em; line-height: 1.6;">
+  Aws Khalil<sup>1</sup> 
+  <a href="https://orcid.org/0000-0001-9139-3900" target="_blank" style="text-decoration: none;">
+    <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" alt="ORCID" style="vertical-align: middle;">
+  </a>
+  , Jaerock Kwon<sup>1</sup>
+  <a href="https://orcid.org/0000-0002-5687-6998" target="_blank" style="text-decoration: none;">
+    <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" alt="ORCID" style="vertical-align: middle;">
+  </a>
+  <br>
+  <small><sup>1</sup>University of Michigan-Dearborn</small>
+</div> -->
+  <!-- Authors and Affiliations -->
+<div style="text-align: center; font-size: 0.95em; line-height: 1.4; margin-top: 10px;">
+  <span style="font-size: 0.95em;">
+    Elahe Delavari<sup>1</sup> 
+    <a href="https://orcid.org/0009-0001-8768-7903" target="_blank" style="text-decoration: none;">
+      <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" alt="ORCID" style="vertical-align: middle;">
+    </a>
+    Aws Khalil<sup>1</sup> 
+    <a href="https://orcid.org/0000-0001-9139-3900" target="_blank" style="text-decoration: none;">
+      <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" alt="ORCID" style="vertical-align: middle;">
+    </a>
+    , Jaerock Kwon<sup>1</sup>
+    <a href="https://orcid.org/0000-0002-5687-6998" target="_blank" style="text-decoration: none;">
+      <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" alt="ORCID" style="vertical-align: middle;">
+    </a>
+  </span>
+  <br>
+  <span style="font-size: 0.8em;"><sup>1</sup>University of Michigan-Dearborn</span>
+</div>
+
+  
+
+<!-- Buttons for Paper / Code / Dataset -->
+<div style="text-align: center; margin-top: 20px; margin-bottom: 30px;">
+  <a href="https://www.arxiv.org/abs/2503.00783" target="_blank" style="text-decoration: none;">
+    <button style="padding: 8px 16px; margin: 5px; background-color: #333; color: white; border: none; border-radius: 20px;">
+      📄 Paper
+    </button>
+  </a>
+  <a href="https://github.com/ElaheDlv/Confidence_Aware_IL" target="_blank" style="text-decoration: none;">
+    <button style="padding: 8px 16px; margin: 5px; background-color: #333; color: white; border: none; border-radius: 20px;">
+      💻 Code
+    </button>
+  </a>
+  <!--<a href="https://drive.google.com/file/d/1gtMUyu29DT-2bCtbBRpiC9BH2CSYKv0b/view?usp=sharing" target="_blank" style="text-decoration: none;">
+    <button style="padding: 8px 16px; margin: 5px; background-color: #333; color: white; border: none; border-radius: 20px;">
+      🗂️ Dataset
+    </button>
+  </a>
+  !-->
+</div>
+
+  <h3>🎥 Demo Video</h3>
+  <div style="text-align: center; margin-bottom: 20px;">
+    <iframe width="100%" height="400" 
+      src="https://www.youtube.com/watch?v=2RPf-T_lsLc" 
+      title="CARIL Demo Video" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin" 
+      allowfullscreen>
+    </iframe>
+  </div>
+  
+  <h3>📄 Abstract</h3>
+  <p>End-to-end vision-based imitation learning has demonstrated promising results in autonomous driving by learning control commands directly from expert demonstrations. However, traditional approaches rely on either regressionbased models, which provide precise control but lack confidence estimation, or classification-based models, which offer confidence scores but suffer from reduced precision due to discretization. This limitation makes it challenging to quantify the reliability of predicted actions and apply corrections when necessary. In this work, we introduce a dual-head neural network architecture that integrates both regression and classification heads to improve decision reliability in imitation learning. The regression head predicts continuous driving actions, while the classification head estimates confidence, enabling a correction mechanism that adjusts actions in low-confidence scenarios, enhancing driving stability. We evaluate our approach in a closed-loop setting within the CARLA simulator, demonstrating its ability to detect uncertain actions, estimate confidence, and apply real-time corrections. Experimental results show that our method reduces lane deviation and improves trajectory accuracy by up to 50%, outperforming conventional regression-only models. These findings highlight the potential of classification-guided confidence estimation in enhancing the robustness of vision-based imitation learning for autonomous driving.</p>
+  
+  <h3>🖼️ Method Overview</h3>
+  <img src="images/overview.png" alt="CARIL architecture" style="width:auto; max-width:100%;">
+
+  <h3>📊 Evaluation Results</h3>
+
+
+  <h4>Classification Performance</h4>
+  <p>
+    The classification head achieved an overall accuracy of <strong>76.33%</strong>. The highest precision was observed in class 5 (straight driving), reflecting its dominance in the dataset. However, the model struggled more with underrepresented classes (e.g., sharp turns). Misclassifications primarily occurred between similar steering classes.
+  </p>
+  <div style="text-align: center;">
+    <img src="images/confusion_matrix.pdf" alt="Confusion Matrix" style="max-width: 90%; border: 1px solid #ccc;">
+  </div>
+  
+  <h4>Real-Time Confidence Estimation</h4>
+  <p>
+    The model estimates the confidence of its predictions using classification entropy and maximum softmax probability. When the model is confident (e.g., Fig. 5a), the regression prediction is retained. In low-confidence situations (e.g., Fig. 5b), a correction is applied. This enhances safety by dynamically adapting predictions in uncertain scenarios.
+  </p>
+  <div class="img-row">
+    <div class="img-col steering">
+      <img src="images/real-time-confidence.pdf" alt="Real-time confidence estimation">
+    </div>
+  </div>
+  
+  <h4>Route Similarity Analysis</h4>
+  <p>
+    Confidence-guided correction significantly improved trajectory accuracy, particularly in complex scenarios (e.g., two-turn routes). Results show a reduction in deviation of up to <strong>50%</strong> across multiple metrics including Fréchet distance, DTW, Area Between Curves (ABC), and Curve Length (CL).
+  </p>
+  
+  <h5>Fréchet & DTW Metrics</h5>
+  <table style="width:100%; border-collapse: collapse; font-size: 0.9em;">
+    <thead>
+      <tr style="background:#eee;">
+        <th>Route Type</th>
+        <th>Fréchet ↓ (W/ Corr.)</th>
+        <th>Fréchet ↓ (W/O Corr.)</th>
+        <th>DTW ↓ (W/ Corr.)</th>
+        <th>DTW ↓ (W/O Corr.)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>One-Turn</td><td>6.66</td><td>7.11</td><td>1108.42</td><td>1148.90</td></tr>
+      <tr><td>Straight</td><td>1.50</td><td>1.56</td><td>145.27</td><td>160.82</td></tr>
+      <tr><td>Two-Turn</td><td><strong>8.93</strong></td><td><strong>25.99</strong></td><td><strong>5417.38</strong></td><td><strong>6605.88</strong></td></tr>
+    </tbody>
+  </table>
+  
+  <h5>ABC & Curve Length</h5>
+  <table style="width:100%; border-collapse: collapse; font-size: 0.9em; margin-top: 1em;">
+    <thead>
+      <tr style="background:#eee;">
+        <th>Route Type</th>
+        <th>ABC ↓ (W/ Corr.)</th>
+        <th>ABC ↓ (W/O Corr.)</th>
+        <th>CL ↓ (W/ Corr.)</th>
+        <th>CL ↓ (W/O Corr.)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>One-Turn</td><td>635.16</td><td>655.99</td><td>0.226</td><td>0.236</td></tr>
+      <tr><td>Straight</td><td>32.26</td><td>41.56</td><td>0.351</td><td>0.503</td></tr>
+      <tr><td>Two-Turn</td><td><strong>3267.10</strong></td><td><strong>3726.18</strong></td><td><strong>0.596</strong></td><td><strong>1.479</strong></td></tr>
+    </tbody>
+  </table>
+  
+  <h5>Overall Route Similarity</h5>
+  <table style="width:100%; border-collapse: collapse; font-size: 0.9em; margin-top: 1em;">
+    <thead>
+      <tr style="background:#eee;">
+        <th>Metric</th>
+        <th>Mean ↓ (W/ Corr.)</th>
+        <th>Mean ↓ (W/O Corr.)</th>
+        <th>Std ↓ (W/ Corr.)</th>
+        <th>Std ↓ (W/O Corr.)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Fréchet</td><td>5.70</td><td>11.56</td><td>3.34</td><td>22.82</td></tr>
+      <tr><td>DTW</td><td>2223.69</td><td>2638.54</td><td>2443.11</td><td>3401.99</td></tr>
+      <tr><td>ABC</td><td>1311.51</td><td>1474.58</td><td>1447.18</td><td>1749.69</td></tr>
+      <tr><td>Curve Length</td><td>0.391</td><td>0.739</td><td>0.177</td><td>1.219</td></tr>
+    </tbody>
+  </table>
+
+  
+  <h3>📖 Citation</h3>
+  <pre style="background:#f9f9f9; padding:12px; border:1px solid #ccc; overflow-x:auto;">
+
+  @article{delavari2025carilconfidenceawareregressionimitation,
+    title={CARIL: Confidence-Aware Regression in Imitation Learning for Autonomous Driving}, 
+    author={Elahe Delavari and Aws Khalil and Jaerock Kwon},
+    year={2025},
+    eprint={2503.00783},
+    archivePrefix={arXiv},
+    primaryClass={cs.RO},
+    url={https://arxiv.org/abs/2503.00783}, 
+}
+  </pre>
+
+  
+<!--   <h2>💻 Code</h2>
+  <p><a href="https://github.com/AwsKhalil/oscar/tree/devel-plm-net" target="_blank">[GitHub Repository]</a></p>
+
+  <h2>🗂️ Dataset</h2>
+  <p>
+    The shared folder contains a ZIP file with the dataset used in this study. 
+    It includes a CSV file with driving control signals and associated metadata, 
+    along with front camera RGB images captured during the data collection process.
+  </p>
+  <p>
+    <a href="https://drive.google.com/drive/folders/1mlmK2XRfoE3ljdZ-Fjdjj3Dra66zj2sQ?usp=sharing" target="_blank">
+      [Access the Dataset on Google Drive]
+    </a>
+  </p>
+
+  
+  <h2>📬 Contact</h2>
+  <p>If you have questions, feel free to contact: <strong>awskh@umich.edu</strong></p> -->
+  
+
+</body>
+</html>
